@@ -44,7 +44,7 @@ class Movie(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
     def get_embed_url(self):
-        return f"https://streamimdb.me/embed/movie/{self.movie_id}"
+        return f"https://streamimdb.ru/embed/movie/{self.movie_id}"
 
     def to_dict(self):
         return {
