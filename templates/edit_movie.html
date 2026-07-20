@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Edit Movie{% endblock %}
+{% block content %}
+<h1>✏️ Edit Movie: {{ movie.name }}</h1>
+<div class="card bg-dark mt-3">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label>Movie ID</label>
+                <input type="text" name="movie_id" class="form-control" value="{{ movie.movie_id }}" required>
+            </div>
+            <div class="mb-3">
+                <label>Movie Name</label>
+                <input type="text" name="name" class="form-control" value="{{ movie.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label>Description</label>
+                <textarea name="description" class="form-control" rows="3">{{ movie.description or '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label>Current Poster</label><br>
+                <img src="{{ movie.poster_path() }}" height="150">
+            </div>
+            <div class="mb-3">
+                <label>Change Poster (optional)</label>
+                <input type="file" name="poster" class="form-control" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-success">Save Changes</button>
+            <a href="{{ url_for('admin') }}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Home - MovieStream{% endblock %}
+{% block content %}
+<h1 class="mb-4">🎬 Latest Movies</h1>
+<div class="row">
+    {% for movie in movies %}
+    <div class="col-md-3 col-sm-6 mb-4">
+        <div class="movie-card" onclick="showCouponModal('{{ movie.movie_id }}')">
+            <div class="position-relative">
+                <img src="{{ movie.poster_path() }}" class="poster-img" alt="{{ movie.name }}">
+                <div class="play-overlay position-absolute top-50 start-50 translate-middle text-white">
+                    <i class="fas fa-play-circle fa-4x" style="opacity: 0.9; text-shadow: 2px 2px 10px black;"></i>
+                </div>
+            </div>
+            <div class="movie-title">{{ movie.name }}</div>
+            <div class="px-3 pb-3 small text-secondary">{{ movie.description[:80] }}{% if movie.description|length > 80 %}...{% endif %}</div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-info">No movies added yet. Go to Admin Panel to add some!</div>
+    </div>
+    {% endfor %}
+</div>
+
+<div id="couponModal" class="coupon-modal">
+    <div class="coupon-box">
+        <h3>Enter Coupon Code</h3>
+        <input type="text" id="couponCode" class="form-control mb-3" placeholder="Enter coupon code">
+        <input type="hidden" id="selectedMovieId">
+        <button onclick="validateCoupon()" class="btn btn-primary">Watch Now</button>
+        <button onclick="closeCouponModal()" class="btn btn-secondary mt-2">Cancel</button>
+        <p id="couponError" class="text-danger mt-2" style="display:none;">Invalid coupon code!</p>
+    </div>
+</div>
+
+<script>
+let pendingMovieId = null;
+
+function showCouponModal(movieId) {
+    pendingMovieId = movieId;
+    document.getElementById('couponModal').classList.add('active');
+    document.getElementById('couponCode').value = '';
+    document.getElementById('couponError').style.display = 'none';
+}
+
+function closeCouponModal() {
+    document.getElementById('couponModal').classList.remove('active');
+    pendingMovieId = null;
+}
+
+function validateCoupon() {
+    const couponCode = document.getElementById('couponCode').value;
+    if (!couponCode) {
+        document.getElementById('couponError').style.display = 'block';
+        return;
+    }
+    
+    fetch('/api/validate-coupon', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({coupon_code: couponCode})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success && data.valid) {
+            window.location.href = '/watch/' + pendingMovieId + '?coupon=' + encodeURIComponent(couponCode);
+        } else {
+            document.getElementById('couponError').style.display = 'block';
+        }
+    })
+    .catch(() => {
+        document.getElementById('couponError').style.display = 'block';
+    });
+}
+</script>
+{% endblock %}

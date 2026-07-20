@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Watch {{ movie.name }}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="mb-3">
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">&larr; Back to Home</a>
+        </div>
+        <h2>{{ movie.name }}</h2>
+        <div class="embed-container my-3">
+            <iframe src="{{ embed_url }}" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="card bg-dark mt-3">
+            <div class="card-body">
+                <h5>Description</h5>
+                <p>{{ movie.description or 'No description provided.' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
